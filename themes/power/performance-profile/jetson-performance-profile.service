@@ -1,0 +1,13 @@
+[Unit]
+Description=Jetson Nano performance profile
+After=nv.service nvpmodel.service
+Requires=nv.service
+ConditionPathExists=/usr/bin/jetson_clocks
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/jetson-performance-profile
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

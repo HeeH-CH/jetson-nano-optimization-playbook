@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONFIG_FILE="/etc/default/jetson-performance-profile"
+
+NVP_MODE=0
+ENABLE_JETSON_CLOCKS=1
+
+if [[ -r "${CONFIG_FILE}" ]]; then
+  # shellcheck disable=SC1091
+  source "${CONFIG_FILE}"
+fi
+
+if [[ ${EUID} -ne 0 ]]; then
+  echo "Run as root" >&2
+  exit 1
+fi
+
+if command -v nvpmodel >/dev/null 2>&1; then
+  nvpmodel -m "${NVP_MODE}"
+fi
+
+if [[ "${ENABLE_JETSON_CLOCKS}" == "1" ]] && command -v jetson_clocks >/dev/null 2>&1; then
+  jetson_clocks
+fi

@@ -51,6 +51,11 @@ Every applied tweak should live here as:
   - install: `sudo ./install.sh`
   - verify: `./status.sh`
   - rollback: `sudo ./rollback.sh`
+- power performance profile:
+  - path: `themes/power/performance-profile/`
+  - install: `sudo ./install.sh`
+  - verify: `./status.sh`
+  - rollback: `sudo ./rollback.sh`
 
 ## Snapshot
 

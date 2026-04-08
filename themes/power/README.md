@@ -6,3 +6,7 @@ Reserved for:
 - `jetson_clocks`
 - power supply notes
 - sustained performance tuning
+
+Current subtopics:
+
+- `performance-profile/`
