@@ -31,3 +31,8 @@ Curve at capture time:
 - `jetson-fan-control.service` enabled
 - `jetson-fan-control.service` active
 - `temp_control=0` after service start
+
+## Extra Setup Note
+
+- on the stock OS image, use `nvm use 16`
+- newer Node.js versions may fail because the stock userspace is too old for the required `glibc` level

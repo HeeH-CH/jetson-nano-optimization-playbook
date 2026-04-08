@@ -34,6 +34,13 @@ Every applied tweak should live here as:
 4. Add a dated note under `logs/`.
 5. Commit with a narrow message.
 
+## Setup Notes
+
+- On the stock Jetson Nano OS image, use Node.js `16` with `nvm use 16`.
+- Newer Node.js releases may fail to install or run on the stock userspace due to
+  an older `glibc` baseline.
+- Keep this in mind before assuming that an npm or nvm failure is package-specific.
+
 ## Applied Changes
 
 - thermal fan control:
