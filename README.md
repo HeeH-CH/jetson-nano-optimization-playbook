@@ -86,6 +86,11 @@ Every applied tweak should live here as:
   - install: `sudo ./install.sh`
   - verify: `./status.sh`
   - rollback: `sudo ./rollback.sh`
+- disable kerneloops:
+  - path: `themes/services/disable-kerneloops/`
+  - install: `sudo ./install.sh`
+  - verify: `./status.sh`
+  - rollback: `sudo ./rollback.sh`
 
 ## Snapshot
 
