@@ -1,0 +1,13 @@
+[Unit]
+Description=Jetson Nano fan control
+After=nv.service
+ConditionPathExists=/sys/devices/pwm-fan/target_pwm
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/jetson-fan-control
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

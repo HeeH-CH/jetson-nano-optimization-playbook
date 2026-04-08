@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly FAN_ROOT="/sys/devices/pwm-fan"
+readonly TEMP_CONTROL="${FAN_ROOT}/temp_control"
+readonly TARGET_PWM="${FAN_ROOT}/target_pwm"
+readonly CUR_PWM="${FAN_ROOT}/cur_pwm"
+readonly CONFIG_FILE="/etc/default/jetson-fan-control"
+
+POLL_INTERVAL=5
+HYSTERESIS_C=2
+KICKSTART_PWM=255
+KICKSTART_SECONDS=0.3
+TEMP_STEPS="0:0 52:120 57:160 62:200 67:230 72:255"
+
+if [[ ${EUID} -ne 0 ]]; then
+  echo "Run as root" >&2
+  exit 1
+fi
+
+if [[ -r "${CONFIG_FILE}" ]]; then
+  # shellcheck disable=SC1091
+  source "${CONFIG_FILE}"
+fi
+
+if [[ ! -w "${TEMP_CONTROL}" || ! -w "${TARGET_PWM}" ]]; then
+  echo "PWM fan control nodes are not writable" >&2
+  exit 1
+fi
+
+declare -a STEP_TEMPS=()
+declare -a STEP_PWMS=()
+
+parse_temp_steps() {
+  local pair temp pwm
+
+  for pair in ${TEMP_STEPS}; do
+    IFS=":" read -r temp pwm <<< "${pair}"
+    if [[ ! ${temp} =~ ^[0-9]+$ || ! ${pwm} =~ ^[0-9]+$ ]]; then
+      echo "Invalid TEMP_STEPS entry: ${pair}" >&2
+      exit 1
+    fi
+    STEP_TEMPS+=("${temp}")
+    STEP_PWMS+=("${pwm}")
+  done
+
+  if [[ ${#STEP_TEMPS[@]} -eq 0 ]]; then
+    echo "TEMP_STEPS must not be empty" >&2
+    exit 1
+  fi
+}
+
+read_primary_temp_c() {
+  local zone type temp_milli max_milli=-1
+
+  for zone in /sys/class/thermal/thermal_zone*; do
+    [[ -r "${zone}/type" && -r "${zone}/temp" ]] || continue
+    type="$(<"${zone}/type")"
+    case "${type}" in
+      CPU-therm|GPU-therm)
+        temp_milli="$(<"${zone}/temp")"
+        [[ ${temp_milli} =~ ^[0-9]+$ ]] || continue
+        if (( temp_milli > max_milli )); then
+          max_milli=${temp_milli}
+        fi
+        ;;
+    esac
+  done
+
+  if (( max_milli < 0 )); then
+    for zone in /sys/class/thermal/thermal_zone*; do
+      [[ -r "${zone}/type" && -r "${zone}/temp" ]] || continue
+      type="$(<"${zone}/type")"
+      case "${type}" in
+        thermal-fan-est|AO-therm|PMIC-Die|PLL-therm)
+          temp_milli="$(<"${zone}/temp")"
+          [[ ${temp_milli} =~ ^[0-9]+$ ]] || continue
+          if (( temp_milli > max_milli )); then
+            max_milli=${temp_milli}
+          fi
+          ;;
+      esac
+    done
+  fi
+
+  if (( max_milli < 0 )); then
+    return 1
+  fi
+
+  printf '%d\n' "$(( max_milli / 1000 ))"
+}
+
+index_for_temp() {
+  local temp_c=$1
+  local idx=0
+  local last_idx=0
+
+  for idx in "${!STEP_TEMPS[@]}"; do
+    if (( temp_c >= STEP_TEMPS[idx] )); then
+      last_idx=${idx}
+    else
+      break
+    fi
+  done
+
+  printf '%d\n' "${last_idx}"
+}
+
+restore_kernel_control() {
+  if [[ -w "${TEMP_CONTROL}" ]]; then
+    echo 1 > "${TEMP_CONTROL}" || true
+  fi
+}
+
+apply_pwm() {
+  local target=$1
+  local temp_c=$2
+  local kick_pwm=$target
+
+  if (( target == LAST_PWM )); then
+    return
+  fi
+
+  if (( LAST_PWM == 0 && target > 0 )); then
+    if (( kick_pwm < KICKSTART_PWM )); then
+      kick_pwm=${KICKSTART_PWM}
+    fi
+    echo "${kick_pwm}" > "${TARGET_PWM}"
+    sleep "${KICKSTART_SECONDS}"
+  fi
+
+  echo "${target}" > "${TARGET_PWM}"
+  LAST_PWM=${target}
+  logger -t jetson-fan-control "temp=${temp_c}C pwm=${target}"
+}
+
+trap restore_kernel_control EXIT INT TERM
+
+parse_temp_steps
+
+echo 0 > "${TEMP_CONTROL}"
+
+CURRENT_TEMP_C="$(read_primary_temp_c)"
+CURRENT_INDEX="$(index_for_temp "${CURRENT_TEMP_C}")"
+LAST_PWM="$(<"${CUR_PWM}")"
+
+apply_pwm "${STEP_PWMS[CURRENT_INDEX]}" "${CURRENT_TEMP_C}"
+
+while true; do
+  sleep "${POLL_INTERVAL}"
+  CURRENT_TEMP_C="$(read_primary_temp_c)" || continue
+
+  while (( CURRENT_INDEX + 1 < ${#STEP_TEMPS[@]} )) && \
+        (( CURRENT_TEMP_C >= STEP_TEMPS[CURRENT_INDEX + 1] )); do
+    ((CURRENT_INDEX+=1))
+  done
+
+  while (( CURRENT_INDEX > 0 )) && \
+        (( CURRENT_TEMP_C < STEP_TEMPS[CURRENT_INDEX] - HYSTERESIS_C )); do
+    ((CURRENT_INDEX-=1))
+  done
+
+  apply_pwm "${STEP_PWMS[CURRENT_INDEX]}" "${CURRENT_TEMP_C}"
+done

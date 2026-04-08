@@ -1,0 +1,13 @@
+# Poll every N seconds.
+POLL_INTERVAL=5
+
+# Keep the current fan level until the temperature drops below
+# the current step minus this value.
+HYSTERESIS_C=2
+
+# Briefly drive the fan harder when waking it from 0 PWM.
+KICKSTART_PWM=255
+KICKSTART_SECONDS=0.3
+
+# Format: celsius:pwm
+TEMP_STEPS="0:0 52:120 57:160 62:200 67:230 72:255"
