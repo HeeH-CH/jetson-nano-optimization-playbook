@@ -6,3 +6,7 @@ Reserved for:
 - boot time trimming
 - background process audits
 - systemd overrides
+
+Current subtopics:
+
+- `audit/`
