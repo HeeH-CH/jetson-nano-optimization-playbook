@@ -11,7 +11,10 @@ if ! command -v gh >/dev/null 2>&1; then
   exit 1
 fi
 
-gh auth status >/dev/null 2>&1
+if ! gh auth status >/dev/null 2>&1; then
+  echo "gh authentication is invalid. Run: gh auth login -h github.com" >&2
+  exit 1
+fi
 
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   echo "Not a git repository" >&2
