@@ -22,3 +22,26 @@ Observed behavior on the stock Jetson Nano OS:
 
 This note should be treated as an environment compatibility constraint, not as
 an application bug.
+
+## IMX219 Probe Note
+
+If a single CSI IMX219 camera is connected, boot logs may still show:
+
+```text
+imx219 8-0010: board setup failed
+```
+
+What this means on this machine:
+
+- `imx219 7-0010` is the working sensor path
+- `imx219 8-0010` is an extra probe attempt that does not answer on I2C
+- this does not block normal camera use as long as the active sensor still binds
+
+Observed healthy signs:
+
+- `/dev/video0` exists
+- the device identifies as `vi-output, imx219 7-0010`
+- `nvarguscamerasrc` capture succeeds
+
+Treat the message as informational unless the active sensor also fails or camera
+capture stops working.
