@@ -1,5 +1,7 @@
 # Jetson Nano Optimization Playbook
 
+[English](README.md) | [한국어](README.ko.md)
+
 This repository is a reproducible notebook for one Jetson Nano system.
 Every applied tweak should live here as:
 
