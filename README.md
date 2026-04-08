@@ -81,6 +81,11 @@ Every applied tweak should live here as:
   - install: `sudo ./install.sh`
   - verify: `./status.sh`
   - rollback: `sudo ./rollback.sh`
+- disable whoopsie:
+  - path: `themes/services/disable-whoopsie/`
+  - install: `sudo ./install.sh`
+  - verify: `./status.sh`
+  - rollback: `sudo ./rollback.sh`
 
 ## Snapshot
 

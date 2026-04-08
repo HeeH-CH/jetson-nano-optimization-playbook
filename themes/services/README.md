@@ -11,3 +11,4 @@ Current subtopics:
 
 - `audit/`
 - `disable-modemmanager/`
+- `disable-whoopsie/`
