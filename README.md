@@ -56,6 +56,12 @@ Every applied tweak should live here as:
   - install: `sudo ./install.sh`
   - verify: `./status.sh`
   - rollback: `sudo ./rollback.sh`
+- runtime monitoring:
+  - path: `themes/monitoring/runtime-health/`
+  - quick status: `./status.sh`
+  - health check: `./health-check.sh`
+  - live watch: `./live-watch.sh`
+  - tegrastats log: `./tegrastats-log.sh`
 
 ## Snapshot
 
