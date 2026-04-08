@@ -62,6 +62,11 @@ Every applied tweak should live here as:
   - health check: `./health-check.sh`
   - live watch: `./live-watch.sh`
   - tegrastats log: `./tegrastats-log.sh`
+- stress profiling:
+  - path: `themes/monitoring/stress-profiles/`
+  - cpu burn: `./cpu-burn.sh`
+  - capture run: `./capture-run.sh`
+  - summary: `./summarize-run.sh <run-dir>`
 
 ## Snapshot
 
