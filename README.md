@@ -34,14 +34,23 @@ Every applied tweak should live here as:
 4. Add a dated note under `logs/`.
 5. Commit with a narrow message.
 
-## First Applied Change
+## Applied Changes
 
-The first tracked change is temperature-based fan control:
-
-- path: `themes/thermal/fan-control/`
-- install: `sudo ./install.sh`
-- verify: `./status.sh`
-- rollback: `sudo ./rollback.sh`
+- thermal fan control:
+  - path: `themes/thermal/fan-control/`
+  - install: `sudo ./install.sh`
+  - verify: `./status.sh`
+  - rollback: `sudo ./rollback.sh`
+- memory zram tuning:
+  - path: `themes/memory/zram-tuning/`
+  - install: `sudo ./install.sh`
+  - verify: `./status.sh`
+  - rollback: `sudo ./rollback.sh`
+- storage log retention:
+  - path: `themes/storage/log-retention/`
+  - install: `sudo ./install.sh`
+  - verify: `./status.sh`
+  - rollback: `sudo ./rollback.sh`
 
 ## Snapshot
 

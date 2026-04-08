@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONFIG_FILE="/etc/default/jetson-zram-tuning"
+
+ZRAM_TOTAL_MB=3072
+ZRAM_ALGORITHM="lzo"
+ZRAM_PRIORITY=100
+
+if [[ -r "${CONFIG_FILE}" ]]; then
+  # shellcheck disable=SC1091
+  source "${CONFIG_FILE}"
+fi
+
+if [[ ${EUID} -ne 0 ]]; then
+  echo "Run as root" >&2
+  exit 1
+fi
+
+device_count="$(grep -c ^processor /proc/cpuinfo)"
+if [[ "${device_count}" -lt 1 ]]; then
+  device_count=1
+fi
+
+modprobe zram num_devices="${device_count}" 2>/dev/null || \
+  modprobe zram zram_num_devices="${device_count}" 2>/dev/null || true
+
+per_device_bytes="$(( ZRAM_TOTAL_MB * 1024 * 1024 / device_count ))"
+
+for dev in /dev/zram*; do
+  [[ -b "${dev}" ]] || continue
+  swapoff "${dev}" 2>/dev/null || true
+done
+
+for sysdev in /sys/block/zram*; do
+  [[ -e "${sysdev}/reset" ]] || continue
+  echo 1 > "${sysdev}/reset"
+done
+
+for sysdev in /sys/block/zram*; do
+  [[ -e "${sysdev}/comp_algorithm" ]] || continue
+  if grep -qw "${ZRAM_ALGORITHM}" "${sysdev}/comp_algorithm"; then
+    echo "${ZRAM_ALGORITHM}" > "${sysdev}/comp_algorithm"
+  fi
+  echo "${per_device_bytes}" > "${sysdev}/disksize"
+done
+
+for dev in /dev/zram*; do
+  [[ -b "${dev}" ]] || continue
+  mkswap "${dev}" >/dev/null
+  swapon -p "${ZRAM_PRIORITY}" "${dev}"
+done
