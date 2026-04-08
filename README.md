@@ -24,6 +24,7 @@ Every applied tweak should live here as:
 - `themes/memory/`: swap, zram, memory pressure control
 - `themes/storage/`: SD card, SSD, I/O, cleanup
 - `themes/services/`: systemd, boot trimming, disabled services
+- `themes/deployment/`: inference runtime, containers, camera/data pipelines
 - `themes/monitoring/`: metrics, validation, watchdogs
 - `tools/`: helper scripts for inspection and data capture
 - `logs/`: dated change notes
@@ -96,6 +97,10 @@ Every applied tweak should live here as:
   - current state: `./status.sh`
   - apply later: follow `README.md`
   - rollback later: follow `README.md`
+- ONNX/TensorRT deployment guide:
+  - path: `themes/deployment/onnx-tensorrt-guide/`
+  - current state: documentation only
+  - apply later: follow `README.md`
 
 ## Snapshot
 

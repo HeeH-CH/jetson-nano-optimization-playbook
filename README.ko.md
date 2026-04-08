@@ -24,6 +24,7 @@
 - `themes/memory/`: swap, zram, 메모리 압박 대응
 - `themes/storage/`: SD 카드, SSD, I/O, 정리 작업
 - `themes/services/`: systemd, 부팅 정리, 서비스 감사/비활성화
+- `themes/deployment/`: 추론 런타임, 컨테이너, 카메라/데이터 파이프라인
 - `themes/monitoring/`: 메트릭, 검증, 모니터링
 - `tools/`: 점검 및 캡처용 보조 스크립트
 - `logs/`: 날짜별 변경 기록
@@ -75,6 +76,10 @@
   - CPU 부하: `./cpu-burn.sh`
   - 캡처 실행: `./capture-run.sh`
   - 요약: `./summarize-run.sh <run-dir>`
+- ONNX/TensorRT 배포 가이드:
+  - 경로: `themes/deployment/onnx-tensorrt-guide/`
+  - 현재 상태: 문서 전용
+  - 나중에 적용: `README.md` 참고
 
 ## 스냅샷
 
