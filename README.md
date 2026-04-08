@@ -76,6 +76,11 @@ Every applied tweak should live here as:
   - cpu burn: `./cpu-burn.sh`
   - capture run: `./capture-run.sh`
   - summary: `./summarize-run.sh <run-dir>`
+- disable ModemManager:
+  - path: `themes/services/disable-modemmanager/`
+  - install: `sudo ./install.sh`
+  - verify: `./status.sh`
+  - rollback: `sudo ./rollback.sh`
 
 ## Snapshot
 
