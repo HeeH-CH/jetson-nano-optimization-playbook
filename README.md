@@ -91,6 +91,11 @@ Every applied tweak should live here as:
   - install: `sudo ./install.sh`
   - verify: `./status.sh`
   - rollback: `sudo ./rollback.sh`
+- headless transition guide:
+  - path: `themes/services/headless-transition/`
+  - current state: `./status.sh`
+  - apply later: follow `README.md`
+  - rollback later: follow `README.md`
 
 ## Snapshot
 

@@ -13,3 +13,4 @@ Current subtopics:
 - `disable-modemmanager/`
 - `disable-whoopsie/`
 - `disable-kerneloops/`
+- `headless-transition/`
