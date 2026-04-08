@@ -50,3 +50,11 @@ To capture a quick machine snapshot:
 ```bash
 ./tools/collect-system-snapshot.sh
 ```
+
+## Publish
+
+When `gh` authentication is valid:
+
+```bash
+./tools/publish.sh
+```
