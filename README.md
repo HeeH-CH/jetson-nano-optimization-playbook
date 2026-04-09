@@ -97,6 +97,11 @@ Every applied tweak should live here as:
   - current state: `./status.sh`
   - apply later: follow `README.md`
   - rollback later: follow `README.md`
+- AC8265 Wi-Fi backport:
+  - path: `themes/services/ac8265-wifi-backport/`
+  - install: `sudo ./install.sh`
+  - verify: `./status.sh`
+  - rollback: `sudo ./rollback.sh`
 - ONNX/TensorRT deployment guide:
   - path: `themes/deployment/onnx-tensorrt-guide/`
   - current state: documentation only

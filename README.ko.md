@@ -76,6 +76,11 @@
   - CPU 부하: `./cpu-burn.sh`
   - 캡처 실행: `./capture-run.sh`
   - 요약: `./summarize-run.sh <run-dir>`
+- AC8265 Wi-Fi backport:
+  - 경로: `themes/services/ac8265-wifi-backport/`
+  - 설치: `sudo ./install.sh`
+  - 검증: `./status.sh`
+  - 롤백: `sudo ./rollback.sh`
 - ONNX/TensorRT 배포 가이드:
   - 경로: `themes/deployment/onnx-tensorrt-guide/`
   - 현재 상태: 문서 전용
