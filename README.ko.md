@@ -43,6 +43,37 @@
 - 더 최신 Node.js 버전은 순정 userspace의 오래된 `glibc` 때문에 설치나 실행이 실패할 수 있습니다.
 - 따라서 npm이나 nvm 실패를 바로 애플리케이션 문제로 보면 안 됩니다.
 
+## 하드웨어 메모
+
+### Intel AC8265 Wi-Fi
+
+이 장비는 Jetson Nano `R32.7.6`, 커널 `4.9.337-tegra` 위에서 Intel
+`AC8265` 카드를 사용합니다.
+
+순정 Jetson `iwlwifi`만으로는 usable한 `wlan0`를 만들지 못했고, 기록 시점에
+실제로 동작한 경로는 아래였습니다.
+
+```text
+backport-iwlwifi 8613-0ubuntu1
+```
+
+여기에 Jetson용 호환성 패치 몇 개가 추가로 필요했습니다.
+
+새 backport들에서 핵심 런타임 blocker는 `compat`의 PKCS#7 및 signed-regdb
+검증 경로였고, 아래 오류를 만들었습니다.
+
+```text
+compat: Unknown symbol hash_algo_name
+```
+
+이 경로를 끄고 DKMS를 다시 빌드한 뒤에는 카드가 정상 로드됐고, `wlan0`에서
+주변 SSID 스캔까지 확인했습니다.
+
+재현 가능한 설치, 검증, 롤백 절차와 자세한 기록은 아래를 보면 됩니다.
+
+- `themes/services/ac8265-wifi-backport/`
+- `logs/2026-04-09-ac8265-wifi-backport.md`
+
 ## 현재 반영된 항목
 
 - thermal fan control:

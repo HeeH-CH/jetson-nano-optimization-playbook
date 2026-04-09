@@ -44,6 +44,38 @@ Every applied tweak should live here as:
   an older `glibc` baseline.
 - Keep this in mind before assuming that an npm or nvm failure is package-specific.
 
+## Hardware Notes
+
+### Intel AC8265 Wi-Fi
+
+This machine uses an Intel `AC8265` card on Jetson Nano `R32.7.6` with kernel
+`4.9.337-tegra`.
+
+The stock Jetson `iwlwifi` path was not enough for a usable `wlan0`.
+The working recovery path at capture time was:
+
+```text
+backport-iwlwifi 8613-0ubuntu1
+```
+
+with a small Jetson-specific compatibility patch set.
+
+The main runtime blocker on newer backports was the PKCS#7 and signed-regdb
+verification path in `compat`, which caused:
+
+```text
+compat: Unknown symbol hash_algo_name
+```
+
+After disabling that path and rebuilding DKMS, the card loaded correctly and
+`wlan0` could scan nearby SSIDs.
+
+For the reproducible installer, verification, rollback steps, and detailed
+notes, see:
+
+- `themes/services/ac8265-wifi-backport/`
+- `logs/2026-04-09-ac8265-wifi-backport.md`
+
 ## Applied Changes
 
 - thermal fan control:
